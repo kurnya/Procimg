@@ -62,66 +62,68 @@
 
     <!-- Transform Panel -->
     <div class="panel" id="transformPanel">
-      <!-- Stats Bar -->
-      <div class="stats-bar" id="statsBar" style="display: none">
-        <div class="container">
-          <div class="stats-inner">
-            <div class="stat-item">
-              <span class="stat-value" id="imageCount">0</span>
-              <span class="stat-label">Images</span>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-actions">
-              <button class="btn btn-sm btn-clear" id="clearAllBtn">
-                <i class="bi bi-trash3"></i> Clear
-              </button>
-              <div class="zip-name-group">
-                <input
-                  type="text"
-                  id="zipFilename"
-                  class="zip-filename-input"
-                  placeholder="filename"
-                  value="transformed_images"
-                />
-                <button
-                  class="btn btn-sm btn-primary-action"
-                  id="downloadAllBtn"
-                >
-                  <i class="bi bi-download"></i> Download
+      <div class="transform-panel-content">
+        <!-- Stats Bar -->
+        <div class="stats-bar" id="statsBar" style="display: none">
+          <div class="container">
+            <div class="stats-inner">
+              <div class="stat-item">
+                <span class="stat-value" id="imageCount">0</span>
+                <span class="stat-label">Images</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-actions">
+                <button class="btn btn-sm btn-clear" id="clearAllBtn">
+                  <i class="bi bi-trash3"></i> Clear
                 </button>
+                <div class="zip-name-group">
+                  <input
+                    type="text"
+                    id="zipFilename"
+                    class="zip-filename-input"
+                    placeholder="filename"
+                    value="transformed_images"
+                  />
+                  <button
+                    class="btn btn-sm btn-primary-action"
+                    id="downloadAllBtn"
+                  >
+                    <i class="bi bi-download"></i> Download
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Toolbar -->
-      <div class="toolbar-wrapper" id="toolbarWrapper" style="display: none">
-        <div class="container">
-          <div class="toolbar-inner">
-            <span class="toolbar-label">Transform</span>
-            <div class="toolbar-group">
-              <button class="btn-tool" data-rotate="90">
-                <i class="bi bi-arrow-clockwise"></i> 90°
-              </button>
-              <button class="btn-tool" data-rotate="180">180°</button>
-              <button class="btn-tool" data-rotate="270">270°</button>
-            </div>
-            <div class="toolbar-divider"></div>
-            <span class="toolbar-label">Mirror</span>
-            <div class="toolbar-group">
-              <button class="btn-tool" data-mirror="h">
-                <i class="bi bi-symmetry-vertical"></i> Horizontal
-              </button>
-              <button class="btn-tool" data-mirror="v">
-                <i class="bi bi-symmetry-horizontal"></i> Vertical
-              </button>
-            </div>
-            <div class="toolbar-divider"></div>
-            <div class="toolbar-group">
-              <button class="btn-tool btn-tool-reset" id="resetAllBtn">
-                <i class="bi bi-arrow-counterclockwise"></i> Reset
-              </button>
+        <!-- Toolbar -->
+        <div class="toolbar-wrapper" id="toolbarWrapper" style="display: none">
+          <div class="container">
+            <div class="toolbar-inner">
+              <span class="toolbar-label">Transform</span>
+              <div class="toolbar-group">
+                <button class="btn-tool" data-rotate="90">
+                  <i class="bi bi-arrow-clockwise"></i> 90°
+                </button>
+                <button class="btn-tool" data-rotate="180">180°</button>
+                <button class="btn-tool" data-rotate="270">270°</button>
+              </div>
+              <div class="toolbar-divider"></div>
+              <span class="toolbar-label">Mirror</span>
+              <div class="toolbar-group">
+                <button class="btn-tool" data-mirror="h">
+                  <i class="bi bi-symmetry-vertical"></i> Horizontal
+                </button>
+                <button class="btn-tool" data-mirror="v">
+                  <i class="bi bi-symmetry-horizontal"></i> Vertical
+                </button>
+              </div>
+              <div class="toolbar-divider"></div>
+              <div class="toolbar-group">
+                <button class="btn-tool btn-tool-reset" id="resetAllBtn">
+                  <i class="bi bi-arrow-counterclockwise"></i> Reset
+                </button>
+              </div>
             </div>
           </div>
         </div>

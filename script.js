@@ -45,19 +45,55 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
 });
 
 function switchTab() {
+  const hasImages = images.length > 0;
+
   if (currentTab === "transform") {
-    transformPanel.style.display = "";
+    transformPanel.style.display = ""; // Always show transform panel
     resizePanel.style.display = "none";
     mergePanel.style.display = "none";
-    toolbarWrapper.style.display = images.length ? "" : "none";
+    toolbarWrapper.style.display = hasImages ? "" : "none";
+
+    // Show info message when no images
+    if (!hasImages) {
+      let infoMsg = transformPanel.querySelector(".panel-info-message");
+      if (!infoMsg) {
+        infoMsg = document.createElement("div");
+        infoMsg.className = "panel-info-message";
+        infoMsg.innerHTML =
+          '<i class="bi bi-info-circle"></i> Upload images to use transform tools';
+        transformPanel
+          .querySelector(".transform-panel-content")
+          .prepend(infoMsg);
+      }
+      infoMsg.style.display = "";
+    } else {
+      const infoMsg = transformPanel.querySelector(".panel-info-message");
+      if (infoMsg) infoMsg.style.display = "none";
+    }
   } else if (currentTab === "resize") {
     transformPanel.style.display = "none";
-    resizePanel.style.display = "";
+    resizePanel.style.display = ""; // Always show resize panel
     mergePanel.style.display = "none";
+
+    // Show info message when no images
+    if (!hasImages) {
+      let infoMsg = resizePanel.querySelector(".panel-info-message");
+      if (!infoMsg) {
+        infoMsg = document.createElement("div");
+        infoMsg.className = "panel-info-message";
+        infoMsg.innerHTML =
+          '<i class="bi bi-info-circle"></i> Upload images to resize';
+        resizePanel.querySelector(".resize-panel-content").prepend(infoMsg);
+      }
+      infoMsg.style.display = "";
+    } else {
+      const infoMsg = resizePanel.querySelector(".panel-info-message");
+      if (infoMsg) infoMsg.style.display = "none";
+    }
   } else if (currentTab === "merge") {
     transformPanel.style.display = "none";
     resizePanel.style.display = "none";
-    mergePanel.style.display = "";
+    mergePanel.style.display = ""; // Always show merge panel
   }
 }
 
@@ -109,7 +145,7 @@ function handleFiles(fileList) {
 
 function updateUI() {
   const hasImages = images.length > 0;
-  tabNav.style.display = hasImages ? "" : "none";
+  tabNav.style.display = ""; // Always show tabs
   statsBar.style.display = hasImages ? "" : "none";
   footer.style.display = hasImages ? "" : "none";
   emptyState.style.display = hasImages ? "none" : "";
@@ -118,6 +154,7 @@ function updateUI() {
   else {
     transformPanel.style.display = "none";
     resizePanel.style.display = "none";
+    mergePanel.style.display = "none";
   }
 
   imageCountEl.textContent = images.length;
