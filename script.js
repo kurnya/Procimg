@@ -300,14 +300,11 @@ document
       '<span class="spinner-border spinner-border-sm"></span> Processing...';
 
     const zip = new JSZip();
-    images.forEach((item) => {
+    images.forEach((item, index) => {
       const canvas = getTransformedCanvas(item);
       const dataUrl = canvas.toDataURL("image/png").split(",")[1];
-      zip.file(
-        "transformed_" + item.file.name.replace(/\.[^.]+$/, "") + ".png",
-        dataUrl,
-        { base64: true },
-      );
+      const fileName = `${zipName}_${String(index + 1).padStart(3, "0")}.png`;
+      zip.file(fileName, dataUrl, { base64: true });
     });
 
     const blob = await zip.generateAsync({ type: "blob" });
@@ -336,18 +333,15 @@ document
       '<span class="spinner-border spinner-border-sm"></span> Processing...';
 
     const zip = new JSZip();
-    images.forEach((item) => {
+    images.forEach((item, index) => {
       const c = document.createElement("canvas");
       const ctx = c.getContext("2d");
       c.width = item.img.width;
       c.height = item.img.height;
       ctx.drawImage(item.img, 0, 0, c.width, c.height);
       const dataUrl = c.toDataURL("image/png").split(",")[1];
-      zip.file(
-        "resized_" + item.file.name.replace(/\.[^.]+$/, "") + ".png",
-        dataUrl,
-        { base64: true },
-      );
+      const fileName = `${zipName}_${String(index + 1).padStart(3, "0")}.png`;
+      zip.file(fileName, dataUrl, { base64: true });
     });
 
     const blob = await zip.generateAsync({ type: "blob" });
