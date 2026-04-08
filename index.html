@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transforma — Image Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <link href="style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container header-inner">
+        <div class="brand">
+          <div class="brand-icon"><i class="bi bi-aperture"></i></div>
+          <div>
+            <h1 class="brand-name">Transforma</h1>
+            <p class="brand-tagline">
+              Rotate, flip & resize your images instantly
+            </p>
+          </div>
+        </div>
+        <button class="btn btn-upload" id="addBtn">
+          <i class="bi bi-plus-lg"></i> Upload Images
+        </button>
+      </div>
+    </header>
+
+    <input type="file" id="fileInput" accept="image/*" multiple hidden />
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" id="tabNav" style="display: none">
+      <div class="container">
+        <div class="tab-list">
+          <button class="tab-btn active" data-tab="transform">
+            <i class="bi bi-arrow-clockwise"></i>
+            <span>Rotate & Flip</span>
+          </button>
+          <button class="tab-btn" data-tab="resize">
+            <i class="bi bi-arrows-angle-expand"></i>
+            <span>Resize</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Transform Panel -->
+    <div class="panel" id="transformPanel">
+      <!-- Stats Bar -->
+      <div class="stats-bar" id="statsBar" style="display: none">
+        <div class="container">
+          <div class="stats-inner">
+            <div class="stat-item">
+              <span class="stat-value" id="imageCount">0</span>
+              <span class="stat-label">Images</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-actions">
+              <button class="btn btn-sm btn-clear" id="clearAllBtn">
+                <i class="bi bi-trash3"></i> Clear
+              </button>
+              <div class="zip-name-group">
+                <input
+                  type="text"
+                  id="zipFilename"
+                  class="zip-filename-input"
+                  placeholder="filename"
+                  value="transformed_images"
+                />
+                <button
+                  class="btn btn-sm btn-primary-action"
+                  id="downloadAllBtn"
+                >
+                  <i class="bi bi-download"></i> Download
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar-wrapper" id="toolbarWrapper" style="display: none">
+        <div class="container">
+          <div class="toolbar-inner">
+            <span class="toolbar-label">Transform</span>
+            <div class="toolbar-group">
+              <button class="btn-tool" data-rotate="90">
+                <i class="bi bi-arrow-clockwise"></i> 90°
+              </button>
+              <button class="btn-tool" data-rotate="180">180°</button>
+              <button class="btn-tool" data-rotate="270">270°</button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <span class="toolbar-label">Mirror</span>
+            <div class="toolbar-group">
+              <button class="btn-tool" data-mirror="h">
+                <i class="bi bi-symmetry-vertical"></i> Horizontal
+              </button>
+              <button class="btn-tool" data-mirror="v">
+                <i class="bi bi-symmetry-horizontal"></i> Vertical
+              </button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <div class="toolbar-group">
+              <button class="btn-tool btn-tool-reset" id="resetAllBtn">
+                <i class="bi bi-arrow-counterclockwise"></i> Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resize Panel -->
+    <div class="panel" id="resizePanel" style="display: none">
+      <div class="resize-panel-content">
+        <div class="container">
+          <div class="resize-controls">
+            <div class="resize-card">
+              <div class="resize-header">
+                <i class="bi bi-arrows-angle-expand"></i>
+                <div>
+                  <h6 class="mb-0 fw-semibold">Resize Images</h6>
+                  <p class="mb-0 text-muted small">
+                    Set width & height in pixels
+                  </p>
+                </div>
+              </div>
+              <div class="resize-body">
+                <div class="resize-inputs">
+                  <div class="resize-field">
+                    <label>Width</label>
+                    <div class="input-wrap">
+                      <input
+                        type="number"
+                        id="resizeWidth"
+                        placeholder="Auto"
+                        min="1"
+                        max="10000"
+                      />
+                      <span class="unit">px</span>
+                    </div>
+                  </div>
+                  <div class="resize-field">
+                    <label>Height</label>
+                    <div class="input-wrap">
+                      <input
+                        type="number"
+                        id="resizeHeight"
+                        placeholder="Auto"
+                        min="1"
+                        max="10000"
+                      />
+                      <span class="unit">px</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="resize-options">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="lockAspect" checked />
+                    <span class="checkmark"
+                      ><i class="bi bi-link-45deg"></i
+                    ></span>
+                    <span>Lock aspect ratio</span>
+                  </label>
+                </div>
+                <div class="resize-presets">
+                  <span class="preset-label">Presets:</span>
+                  <div class="preset-chips">
+                    <button class="chip" data-w="1920" data-h="1080">
+                      1920×1080
+                    </button>
+                    <button class="chip" data-w="1280" data-h="720">
+                      1280×720
+                    </button>
+                    <button class="chip" data-w="800" data-h="600">
+                      800×600
+                    </button>
+                    <button class="chip" data-w="512" data-h="512">
+                      512×512
+                    </button>
+                    <button class="chip" data-w="256" data-h="256">
+                      256×256
+                    </button>
+                    <button class="chip" data-w="128" data-h="128">
+                      128×128
+                    </button>
+                  </div>
+                </div>
+                <div class="resize-actions">
+                  <button class="btn btn-apply-resize" id="applyResize">
+                    <i class="bi bi-check-lg"></i> Apply Resize
+                  </button>
+                  <button
+                    class="btn btn-download-resized"
+                    id="downloadResizedBtn"
+                    disabled
+                  >
+                    <i class="bi bi-download"></i> Download Resized
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <div id="imageGrid" class="row g-3"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state">
+        <div class="empty-visual">
+          <div class="empty-circle">
+            <i class="bi bi-image"></i>
+          </div>
+          <div class="floating-icon fi-1">
+            <i class="bi bi-arrow-clockwise"></i>
+          </div>
+          <div class="floating-icon fi-2">
+            <i class="bi bi-symmetry-vertical"></i>
+          </div>
+          <div class="floating-icon fi-3">
+            <i class="bi bi-arrows-angle-expand"></i>
+          </div>
+        </div>
+        <h2 class="empty-title">No images yet</h2>
+        <p class="empty-desc">
+          Upload images to rotate, flip, and resize them in seconds
+        </p>
+        <button class="btn btn-upload-lg" id="emptyAddBtn">
+          <i class="bi bi-cloud-arrow-up"></i> Upload Images
+        </button>
+        <p class="empty-hint">
+          Supports JPG, PNG, WEBP, GIF — up to 1000 images
+        </p>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" id="footer" style="display: none">
+      <div class="container text-center">
+        <p>
+          All transformations apply to every uploaded image. No selection
+          needed.
+        </p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
