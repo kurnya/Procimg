@@ -52,6 +52,10 @@
             <i class="bi bi-arrows-angle-expand"></i>
             <span>Resize</span>
           </button>
+          <button class="tab-btn" data-tab="merge">
+            <i class="bi bi-collection"></i>
+            <span>Merge ZIP</span>
+          </button>
         </div>
       </div>
     </nav>
@@ -210,6 +214,66 @@
                     disabled
                   >
                     <i class="bi bi-download"></i> Download Resized
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Merge ZIP Panel -->
+    <div class="panel" id="mergePanel" style="display: none">
+      <div class="merge-panel-content">
+        <div class="container">
+          <div class="merge-controls">
+            <div class="merge-card">
+              <div class="merge-header">
+                <i class="bi bi-collection"></i>
+                <div>
+                  <h6 class="mb-0 fw-semibold">Merge ZIP Files</h6>
+                  <p class="mb-0 text-muted small">
+                    Combine multiple ZIP files into one
+                  </p>
+                </div>
+              </div>
+              <div class="merge-body">
+                <input
+                  type="file"
+                  id="zipFileInput"
+                  accept=".zip"
+                  multiple
+                  hidden
+                />
+                <div class="merge-upload-area" id="mergeUploadArea">
+                  <i class="bi bi-file-earmark-zip"></i>
+                  <p>Click to upload ZIP files</p>
+                  <p class="small text-muted">or drag and drop</p>
+                </div>
+                <button class="btn btn-upload-merge" id="uploadZipBtn">
+                  <i class="bi bi-plus-lg"></i> Add ZIP Files
+                </button>
+                <div class="zip-file-list" id="zipFileList"></div>
+                <div
+                  class="merge-actions"
+                  id="mergeActions"
+                  style="display: none"
+                >
+                  <div class="merge-field">
+                    <label>Output ZIP Name</label>
+                    <div class="input-wrap">
+                      <input
+                        type="text"
+                        id="mergeZipName"
+                        placeholder="merged_files"
+                        value="merged_files"
+                      />
+                      <span class="unit">.zip</span>
+                    </div>
+                  </div>
+                  <button class="btn btn-merge" id="mergeZipBtn" disabled>
+                    <i class="bi bi-collection"></i> Merge & Download
                   </button>
                 </div>
               </div>

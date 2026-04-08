@@ -10,6 +10,15 @@ const imageGrid = document.getElementById("imageGrid");
 const emptyState = document.getElementById("emptyState");
 const footer = document.getElementById("footer");
 
+const mergePanel = document.getElementById("mergePanel");
+const zipFileInput = document.getElementById("zipFileInput");
+const uploadZipBtn = document.getElementById("uploadZipBtn");
+const mergeUploadArea = document.getElementById("mergeUploadArea");
+const zipFileList = document.getElementById("zipFileList");
+const mergeActions = document.getElementById("mergeActions");
+const mergeZipNameInput = document.getElementById("mergeZipName");
+const mergeZipBtn = document.getElementById("mergeZipBtn");
+
 const imageCountEl = document.getElementById("imageCount");
 
 const resizeWidthInput = document.getElementById("resizeWidth");
@@ -39,10 +48,16 @@ function switchTab() {
   if (currentTab === "transform") {
     transformPanel.style.display = "";
     resizePanel.style.display = "none";
+    mergePanel.style.display = "none";
     toolbarWrapper.style.display = images.length ? "" : "none";
-  } else {
+  } else if (currentTab === "resize") {
     transformPanel.style.display = "none";
     resizePanel.style.display = "";
+    mergePanel.style.display = "none";
+  } else if (currentTab === "merge") {
+    transformPanel.style.display = "none";
+    resizePanel.style.display = "none";
+    mergePanel.style.display = "";
   }
 }
 
@@ -57,7 +72,17 @@ fileInput.addEventListener("change", () => {
 window.addEventListener("dragover", (e) => e.preventDefault());
 window.addEventListener("drop", (e) => {
   e.preventDefault();
-  if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+  if (e.dataTransfer.files.length) {
+    // Check if we're on merge tab and files are ZIPs
+    const zips = Array.from(e.dataTransfer.files).filter(
+      (f) => f.name.endsWith(".zip") || f.type === "application/zip",
+    );
+    if (currentTab === "merge" && zips.length > 0) {
+      handleZipFiles(zips);
+    } else {
+      handleFiles(e.dataTransfer.files);
+    }
+  }
 });
 
 function handleFiles(fileList) {
@@ -357,3 +382,135 @@ document
 
 // --- Init ---
 updateUI();
+
+// --- Merge ZIP ---
+let uploadedZipFiles = [];
+
+uploadZipBtn.addEventListener("click", () => zipFileInput.click());
+mergeUploadArea.addEventListener("click", () => zipFileInput.click());
+
+zipFileInput.addEventListener("change", () => {
+  if (zipFileInput.files.length) {
+    handleZipFiles(zipFileInput.files);
+    zipFileInput.value = "";
+  }
+});
+
+window.addEventListener("dragover", (e) => e.preventDefault());
+window.addEventListener("drop", (e) => {
+  e.preventDefault();
+  if (e.dataTransfer.files.length) {
+    const zips = Array.from(e.dataTransfer.files).filter(
+      (f) => f.name.endsWith(".zip") || f.type === "application/zip",
+    );
+    if (zips.length) handleZipFiles(zips);
+  }
+});
+
+function handleZipFiles(fileList) {
+  const files = Array.from(fileList).filter(
+    (f) => f.name.endsWith(".zip") || f.type === "application/zip",
+  );
+
+  files.forEach((file) => {
+    uploadedZipFiles.push(file);
+  });
+
+  renderZipFileList();
+}
+
+function renderZipFileList() {
+  if (uploadedZipFiles.length === 0) {
+    zipFileList.innerHTML = "";
+    mergeActions.style.display = "none";
+    return;
+  }
+
+  mergeActions.style.display = "";
+
+  zipFileList.innerHTML = uploadedZipFiles
+    .map((file, index) => {
+      const size = (file.size / 1024).toFixed(2);
+      return `
+        <div class="zip-file-item">
+          <i class="bi bi-file-earmark-zip-fill"></i>
+          <div class="zip-file-info">
+            <div class="zip-file-name">${file.name}</div>
+            <div class="zip-file-size">${size} KB</div>
+          </div>
+          <button class="btn-remove-zip" data-index="${index}">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      `;
+    })
+    .join("");
+
+  zipFileList.querySelectorAll(".btn-remove-zip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = parseInt(btn.dataset.index);
+      uploadedZipFiles.splice(index, 1);
+      renderZipFileList();
+    });
+  });
+
+  mergeZipBtn.disabled = uploadedZipFiles.length < 2;
+}
+
+mergeZipBtn.addEventListener("click", async () => {
+  if (uploadedZipFiles.length < 2) {
+    alert("Please upload at least 2 ZIP files to merge.");
+    return;
+  }
+
+  mergeZipBtn.disabled = true;
+  mergeZipBtn.innerHTML =
+    '<span class="spinner-border spinner-border-sm"></span> Merging...';
+
+  try {
+    const mergedZip = new JSZip();
+    const fileNames = new Set();
+
+    for (const zipFile of uploadedZipFiles) {
+      const zipData = await zipFile.arrayBuffer();
+      const zip = await JSZip.loadAsync(zipData);
+
+      for (const relativePath of Object.keys(zip.files)) {
+        const zipEntry = zip.files[relativePath];
+        let finalName = relativePath;
+        let counter = 1;
+        while (fileNames.has(finalName)) {
+          const nameParts = relativePath.split(".");
+          const ext = nameParts.length > 1 ? "." + nameParts.pop() : "";
+          const name = nameParts.join(".");
+          finalName = `${name}_${counter}${ext}`;
+          counter++;
+        }
+        fileNames.add(finalName);
+
+        if (!zipEntry.dir) {
+          const blob = await zipEntry.async("blob");
+          mergedZip.file(finalName, blob);
+        }
+      }
+    }
+
+    const blob = await mergedZip.generateAsync({ type: "blob" });
+    let zipName = mergeZipNameInput.value.trim() || "merged_files";
+    zipName = zipName.replace(/\.zip$/i, "");
+
+    const link = document.createElement("a");
+    link.download = zipName + ".zip";
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    URL.revokeObjectURL(link.href);
+
+    mergeZipBtn.disabled = false;
+    mergeZipBtn.innerHTML = '<i class="bi bi-collection"></i> Merge & Download';
+  } catch (error) {
+    console.error("Error merging ZIPs:", error);
+    alert("Error merging ZIP files. Please try again.");
+    mergeZipBtn.disabled = false;
+    mergeZipBtn.innerHTML = '<i class="bi bi-collection"></i> Merge & Download';
+  }
+});
